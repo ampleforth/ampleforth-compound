@@ -80,4 +80,11 @@ BlockchainCaller.prototype.isEthException = async function (promise) {
   );
 };
 
+// Parse compound-specific error codes
+BlockchainCaller.prototype.isCompoundException = async function (promise) {
+  const tx = await promise;
+  const errors = tx.logs.filter(l => l.event == "Failure");
+  return errors.length > 0;
+};
+
 module.exports = BlockchainCaller;

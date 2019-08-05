@@ -1,4 +1,6 @@
-pragma solidity 0.5.8;
+// File: contracts/CarefulMath.sol
+
+pragma solidity ^0.5.8;
 
 /**
   * @title Careful Math

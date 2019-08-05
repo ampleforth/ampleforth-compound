@@ -1,9 +1,12 @@
-pragma solidity 0.5.8;
+// File: contracts/CErc20.sol
 
-import "contracts/CToken.sol";
-import "contracts/EIP20Interface.sol";
-import "contracts/EIP20NonStandardInterface.sol";
+pragma solidity ^0.5.8;
 
+import "./ComptrollerInterface.sol";
+import "./CToken.sol";
+import "./EIP20Interface.sol";
+import "./EIP20NonStandardInterface.sol";
+import "./InterestRateModel.sol";
 
 /**
  * @title Compound's CErc20 Contract
@@ -52,7 +55,7 @@ contract CErc20 is CToken {
         return mintInternal(mintAmount);
     }
 
-    /**n
+    /**
      * @notice Sender redeems cTokens in exchange for the underlying asset
      * @dev Accrues interest whether or not the operation succeeds, unless reverted
      * @param redeemTokens The number of cTokens to redeem into underlying

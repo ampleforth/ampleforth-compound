@@ -13,7 +13,7 @@ run-unit-tests(){
   npx truffle \
     --network $1 \
     test \
-    $PROJECT_DIR/test/unit/*.js
+    $PROJECT_DIR/test/*.js
 }
 
 run-all-tests(){
@@ -40,7 +40,7 @@ run-all-tests(){
   trap cleanup EXIT
 }
 
-npx truffle compile
+$DIR/compile-dep-contracts.sh
 
 run-all-tests "ganacheUnitTest"
 

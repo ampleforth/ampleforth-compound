@@ -1,4 +1,6 @@
-pragma solidity 0.5.8;
+// File: contracts/ErrorReporter.sol
+
+pragma solidity ^0.5.8;
 
 contract ComptrollerErrorReporter {
     enum Error {

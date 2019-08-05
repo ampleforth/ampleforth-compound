@@ -1,12 +1,13 @@
-pragma solidity 0.5.8;
+// File: contracts/CToken.sol
 
-import "contracts/CarefulMath.sol";
-import "contracts/ComptrollerInterface.sol";
-import "contracts/EIP20Interface.sol";
-import "contracts/ErrorReporter.sol";
-import "contracts/Exponential.sol";
-import "contracts/ReentrancyGuard.sol";
+pragma solidity ^0.5.8;
 
+import "./ComptrollerInterface.sol";
+import "./EIP20Interface.sol";
+import "./Exponential.sol";
+import "./ErrorReporter.sol";
+import "./InterestRateModel.sol";
+import "./ReentrancyGuard.sol";
 
 /**
  * @title Compound's CToken Contract

@@ -1,7 +1,8 @@
-pragma solidity 0.5.8;
+// File: contracts/Exponential.sol
 
-import "contracts/CarefulMath.sol";
+pragma solidity ^0.5.8;
 
+import "./CarefulMath.sol";
 
 /**
  * @title Exponential module for storing fixed-decision decimals
