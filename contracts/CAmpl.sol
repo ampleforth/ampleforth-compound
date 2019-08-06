@@ -15,7 +15,7 @@ contract CAmpl is CErc20 {
       1 * (10 ** 18),
       "Compound Ampleforth",
       "cAMPL",
-      8
+      9
     )
     public
     {}
