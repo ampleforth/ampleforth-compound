@@ -26,27 +26,21 @@
   These test cases are inspired from OpenZepplin's ERC20 unit test.
   https://github.com/OpenZeppelin/openzeppelin-solidity/blob/master/test/token/ERC20/ERC20.test.js
 */
-const AmpleforthErc20 = artifacts.require('UFragments.sol');
-const CAmpl = artifacts.require('CAmpl.sol');
-const CAmplInterestRateModel = artifacts.require('CAmplInterestRateModel.sol');
-const FakeCEtherInterestRateModel = artifacts.require('FakeCEtherInterestRateModel.sol');
-const FakeComptroller = artifacts.require('FakeComptroller.sol');
-const FakeCEther = artifacts.require('FakeCEther.sol');
-
-const _require = require('app-root-path').require;
-const BlockchainCaller = _require('/util/blockchain_caller');
-const chain = new BlockchainCaller(web3);
-var BN = require('bn.js');
+const BN = require('bn.js');
 const chai = require('chai');
 chai.use(require('bn-chai')(BN));
 expect = chai.expect;
 
-const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000';
-const AMPL_DECIMALS = 9;
-const INITIAL_SUPPLY = new BN(50000000).mul(new BN(10 ** AMPL_DECIMALS));
-const transferAmount = new BN(10).mul(new BN(10 ** AMPL_DECIMALS));
-const unitTokenAmount = new BN(1).mul(new BN(10 ** AMPL_DECIMALS));
-const overdraftAmount = INITIAL_SUPPLY.add(unitTokenAmount);
+const _require = require('app-root-path').require;
+const { setupCAmpl, toAmplDecimals, toCAmplDecimals, INITIAL_EXCHANGE_RATE } = _require('/test/helper');
+const BlockchainCaller = _require('/util/blockchain_caller');
+const chain = new BlockchainCaller(web3);
+
+const AMPLS_LOCKED_UP = toAmplDecimals(2000000); // 2m
+const INITIAL_cAMPL_SUPPLY = AMPLS_LOCKED_UP.div(INITIAL_EXCHANGE_RATE);
+const transferAmount = toCAmplDecimals(10);
+const unitTokenAmount = toCAmplDecimals(1);
+const overdraftAmount = INITIAL_cAMPL_SUPPLY.add(unitTokenAmount);
 const overdraftAmountPlusOne = overdraftAmount.add(unitTokenAmount);
 const overdraftAmountMinusOne = overdraftAmount.sub(unitTokenAmount);
 const transferAmountPlusOne = transferAmount.add(unitTokenAmount);
@@ -57,22 +51,9 @@ async function setupContractAndAccounts (accounts) {
   owner = accounts[0];
   anotherAccount = accounts[8];
   recipient = accounts[9];
-
-  const ampl = await AmpleforthErc20.new();
-  await ampl.initialize(owner);
-
-  const irmCAmpl = await CAmplInterestRateModel.new();
-  const irmCEther = await FakeCEtherInterestRateModel.new();
-  const comptroller = await FakeComptroller.new();
-
-  cAmpl = await CAmpl.new(ampl.address, comptroller.address, irmCAmpl.address);
-  const cEther = await FakeCEther.new(comptroller.address, irmCEther.address);
-
-  await comptroller._supportMarket(cAmpl.address);
-  await comptroller._supportMarket(cEther.address);
-
-  await ampl.approve(cAmpl.address, INITIAL_SUPPLY)
-  await cAmpl.mint(INITIAL_SUPPLY, {from:owner});
+  [ampl, cAmpl] = await setupCAmpl(accounts);
+  await ampl.approve(cAmpl.address, AMPLS_LOCKED_UP);
+  await cAmpl.mint(AMPLS_LOCKED_UP);
 }
 
 contract('CAmpl:ERC20', function (accounts) {
@@ -82,7 +63,7 @@ contract('CAmpl:ERC20', function (accounts) {
 
   describe('totalSupply', function () {
     it('returns the total amount of tokens', async function () {
-      expect(await cAmpl.totalSupply.call()).to.eq.BN(INITIAL_SUPPLY);
+      expect(await cAmpl.totalSupply.call()).to.eq.BN(INITIAL_cAMPL_SUPPLY);
     });
   });
 
@@ -95,7 +76,7 @@ contract('CAmpl:ERC20', function (accounts) {
 
     describe('when the requested account has some tokens', function () {
       it('returns the total amount of tokens', async function () {
-        expect(await cAmpl.balanceOf.call(owner)).to.eq.BN(INITIAL_SUPPLY);
+        expect(await cAmpl.balanceOf.call(owner)).to.eq.BN(INITIAL_cAMPL_SUPPLY);
       });
     });
   });
