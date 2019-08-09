@@ -24,7 +24,7 @@ contract('CAmpl:borrowRepay', function (accounts) {
     await cAmpl.mint(AMPLS_SUPPLIED, {from:owner});
   });
 
-  describe('A: brrows 1m AMPL', function(){
+  describe('A: borrows 1m AMPL', function(){
     beforeEach(async function(){
       expect(await ampl.balanceOf.call(anotherAccount)).to.eq.BN(0);
       await cAmpl.borrow(toAmplDecimals(1000000), {from: anotherAccount});
