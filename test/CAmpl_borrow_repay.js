@@ -63,7 +63,7 @@ contract('CAmpl:borrowRepay', function (accounts) {
       });
 
       it('should pay for the loss from rebase', async function(){
-        // Interst accrued is around 371.1 AMPL
+        // Interest accrued is around 371.1 AMPL
         expect(await ampl.balanceOf.call(anotherAccount)).to.eq.BN(toAmplDecimals(500000));
         expect(await cAmpl.borrowBalanceStored.call(anotherAccount)).to.eq.BN("1000371128234396");
 
