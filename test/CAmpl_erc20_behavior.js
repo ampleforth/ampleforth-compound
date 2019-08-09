@@ -36,8 +36,8 @@ const { setupCAmpl, toAmplDecimals, toCAmplDecimals, INITIAL_EXCHANGE_RATE } = _
 const BlockchainCaller = _require('/util/blockchain_caller');
 const chain = new BlockchainCaller(web3);
 
-const AMPLS_LOCKED_UP = toAmplDecimals(2000000); // 2m
-const INITIAL_cAMPL_SUPPLY = AMPLS_LOCKED_UP.div(INITIAL_EXCHANGE_RATE);
+const AMPLS_SUPPLIED = toAmplDecimals(2000000); // 2m
+const INITIAL_cAMPL_SUPPLY = AMPLS_SUPPLIED.div(INITIAL_EXCHANGE_RATE);
 const transferAmount = toCAmplDecimals(10);
 const unitTokenAmount = toCAmplDecimals(1);
 const overdraftAmount = INITIAL_cAMPL_SUPPLY.add(unitTokenAmount);
@@ -52,8 +52,8 @@ async function setupContractAndAccounts (accounts) {
   anotherAccount = accounts[8];
   recipient = accounts[9];
   [ampl, cAmpl] = await setupCAmpl(accounts);
-  await ampl.approve(cAmpl.address, AMPLS_LOCKED_UP);
-  await cAmpl.mint(AMPLS_LOCKED_UP);
+  await ampl.approve(cAmpl.address, AMPLS_SUPPLIED);
+  await cAmpl.mint(AMPLS_SUPPLIED);
 }
 
 contract('CAmpl:ERC20', function (accounts) {
