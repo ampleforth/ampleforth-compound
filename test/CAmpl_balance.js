@@ -29,10 +29,10 @@ contract('CAmpl', function (accounts) {
     beforeEach(async function(){
       await invokeRebase(ampl, 10); // +10% supply
     });
-    it('should not update the totalSupply', async function() {
+    it('should NOT update the totalSupply', async function() {
       expect(await cAmpl.totalSupply.call()).to.eq.BN(MINT_cAMPL_SUPPLY);
     });
-    it('should not update the cAmpl balance', async function () {
+    it('should NOT update the cAmpl balance', async function () {
       expect(await cAmpl.balanceOf.call(owner)).to.eq.BN(MINT_cAMPL_SUPPLY);
     });
     it('should update the underlying ampl balance', async function () {
@@ -45,10 +45,10 @@ contract('CAmpl', function (accounts) {
     beforeEach(async function(){
       await invokeRebase(ampl, -10); // -10% supply
     });
-    it('should not update the totalSupply', async function() {
+    it('should NOT update the totalSupply', async function() {
       expect(await cAmpl.totalSupply.call()).to.eq.BN(MINT_cAMPL_SUPPLY);
     });
-    it('should not update the cAmpl balance', async function () {
+    it('should NOT update the cAmpl balance', async function () {
       expect(await cAmpl.balanceOf.call(owner)).to.eq.BN(MINT_cAMPL_SUPPLY);
     });
     it('should update the underlying ampl balance', async function () {
@@ -57,14 +57,14 @@ contract('CAmpl', function (accounts) {
     });
   });
 
-  describe('when rebase does not change AMPL supply', function () {
+  describe('when rebase does NOT change AMPL supply', function () {
     beforeEach(async function(){
       await invokeRebase(ampl, 0);
     });
-    it('should not update the totalSupply', async function() {
+    it('should NOT update the totalSupply', async function() {
       expect(await cAmpl.totalSupply.call()).to.eq.BN(MINT_cAMPL_SUPPLY);
     });
-    it('should not update the cAmpl balance', async function () {
+    it('should NOT update the cAmpl balance', async function () {
       expect(await cAmpl.balanceOf.call(owner)).to.eq.BN(MINT_cAMPL_SUPPLY);
     });
     it('should update the underlying ampl balance', async function () {
