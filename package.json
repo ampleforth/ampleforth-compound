@@ -30,6 +30,7 @@
   "devDependencies": {
     "bn-chai": "^1.0.1",
     "bn.js": "^5.0.0",
-    "chai": "^4.2.0"
+    "chai": "^4.2.0",
+    "zos-lib": "^2.0.0"
   }
 }
