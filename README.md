@@ -1,6 +1,10 @@
 # Ampleforth Compound CToken
 
-TODO: Fill this in.
+```
+npm i
+npx setup-local-chains 'lite'
+npm test
+```
 
 ## License
 
