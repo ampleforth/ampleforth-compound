@@ -78,6 +78,7 @@ contract('CAmpl', function (accounts) {
   });
 
   describe('when utilization ratio > 0', function () {
+    // supplier gets part (based on the un-utilized cash) of the rebase rewards or losses
     beforeEach(async function(){
       // 75% of cash is borrowed
       await cAmpl.borrow(AMPLS_BORROWED, {from: anotherAccount});
