@@ -8,9 +8,9 @@ const { setupCAmpl, toAmplDecimals, invokeRebase, INITIAL_EXCHANGE_RATE } = _req
 const BlockchainCaller = _require('/util/blockchain_caller');
 const chain = new BlockchainCaller(web3);
 
-const AMPLS_SUPPLIED = toAmplDecimals(2000000); // 2m
+const AMPLS_SUPPLIED = toAmplDecimals(1000000); // 1m
 
-let ampl, cAmpl, owner, anotherAccount, initCash;
+let ampl, cAmpl, owner, anotherAccount, mintSupply;
 async function setupContractAndAccounts (accounts) {
   owner = accounts[0];
   anotherAccount = accounts[8];
@@ -20,19 +20,19 @@ async function setupContractAndAccounts (accounts) {
 contract('CAmpl:borrowRepay', function (accounts) {
   beforeEach('setup CAmpl contract', async function () {
     await setupContractAndAccounts(accounts);
-    await ampl.approve(cAmpl.address, AMPLS_SUPPLIED);
-    await cAmpl.mint(AMPLS_SUPPLIED, {from:owner});
-    await ampl.transfer(anotherAccount, toAmplDecimals(1200000));
   });
 
-  describe('A: borrows 1m AMPL', function(){
+  describe('O supplies 1m and A borrows 1m AMPL', function(){
     beforeEach(async function(){
-      // starts off with 1.2m AMPLS, borrows another 1m
+      // O supplies 1m
+      await ampl.approve(cAmpl.address, AMPLS_SUPPLIED);
+      await cAmpl.mint(AMPLS_SUPPLIED, {from:owner});
+      mintSupply = await cAmpl.balanceOf(owner);
+
+      // A starts off with 1.2m AMPLS, borrows another 1m
+      await ampl.transfer(anotherAccount, toAmplDecimals(1200000));
       expect(await ampl.balanceOf.call(anotherAccount)).to.eq.BN(toAmplDecimals(1200000));
       await cAmpl.borrow(toAmplDecimals(1000000), {from: anotherAccount});
-    });
-
-    it('should increase A\'s AMPL balance', async function(){
       expect(await ampl.balanceOf.call(anotherAccount)).to.eq.BN(toAmplDecimals(2200000));
     });
 
@@ -43,18 +43,26 @@ contract('CAmpl:borrowRepay', function (accounts) {
         await cAmpl.accrueInterest();
       });
 
-      it('should keep the profits from rebase', async function(){
-        // balance after rebase 4.4m
+      it('A keeps the supply gains from rebase, O gets principal + interest', async function(){
+        // A's balance after rebase 4.4m
         expect(await ampl.balanceOf.call(anotherAccount)).to.eq.BN(toAmplDecimals(4400000));
-        // Interest accrued is around 10.35 AMPL
-        expect(await cAmpl.borrowBalanceStored.call(anotherAccount)).to.eq.BN("1000010359589041");
+        // Interest accrued is around 19.56 AMPL
+        expect(await cAmpl.borrowBalanceStored.call(anotherAccount)).to.eq.BN("1000019568112633");
 
-        await ampl.approve(cAmpl.address, toAmplDecimals(1000011), {from: anotherAccount});
-        await cAmpl.repayBorrow(-1, {from: anotherAccount}); // Repay everything
+        // A Repays everything
+        await ampl.approve(cAmpl.address, toAmplDecimals(1000020), {from: anotherAccount});
+        await cAmpl.repayBorrow(-1, {from: anotherAccount});
 
-        // Balance after repaying 3,399,989.55 AMPL
+        // A's balance after repaying 3,399,980.27 AMPL
         expect(await cAmpl.borrowBalanceStored.call(anotherAccount)).to.eq.BN(0);
-        expect(await ampl.balanceOf.call(anotherAccount)).to.eq.BN("3399989554793371");
+        expect(await cAmpl.totalBorrows.call()).to.eq.BN(0);
+        expect(await ampl.balanceOf.call(anotherAccount)).to.eq.BN("3399980270164264");
+
+        // O's final balance 1,000,019.72 AMPL
+        const b = await ampl.balanceOf(owner);
+        await cAmpl.redeem(mintSupply);
+        const b_ = await ampl.balanceOf(owner);
+        expect(b_.sub(b)).to.eq.BN("1000019729835736");
       });
     });
 
@@ -65,18 +73,25 @@ contract('CAmpl:borrowRepay', function (accounts) {
         await cAmpl.accrueInterest();
       });
 
-      it('should pay for the loss from rebase', async function(){
-        // balance after rebase 1.1m
+      it('A keeps the pays for supply losses from rebase, O gets principal + interest', async function(){
+        // A's balance after rebase 1.1m
         expect(await ampl.balanceOf.call(anotherAccount)).to.eq.BN(toAmplDecimals(1100000));
-        // Interest accrued is around 14.96 AMPL
-        expect(await cAmpl.borrowBalanceStored.call(anotherAccount)).to.eq.BN("1000014963850837");
+        // Interest accrued is around 19.56 AMPL
+        expect(await cAmpl.borrowBalanceStored.call(anotherAccount)).to.eq.BN("1000019568112633");
 
-        await ampl.approve(cAmpl.address, toAmplDecimals(1000016), {from: anotherAccount});
+        // A Repays everything
+        await ampl.approve(cAmpl.address, toAmplDecimals(1000020), {from: anotherAccount});
         await cAmpl.repayBorrow(-1, {from: anotherAccount}); // Repay everything
 
-        // Balance after repaying 99,984.9 AMPL
+        // A's balance after repaying 99,980.27 AMPL
         expect(await cAmpl.borrowBalanceStored.call(anotherAccount)).to.eq.BN(0);
-        expect(await ampl.balanceOf.call(anotherAccount)).to.eq.BN(99984912478745);
+        expect(await ampl.balanceOf.call(anotherAccount)).to.eq.BN(99980270164264);
+
+        // O's final balance 1,000,019.72 AMPL
+        const b = await ampl.balanceOf(owner);
+        await cAmpl.redeem(mintSupply);
+        const b_ = await ampl.balanceOf(owner);
+        expect(b_.sub(b)).to.eq.BN("1000019729835736");
       });
     });
   });
