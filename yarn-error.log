@@ -1,0 +1,57 @@
+Arguments: 
+  /Users/nithin/.nvm/versions/node/v16.7.0/bin/node /usr/local/Cellar/yarn/1.22.10/libexec/bin/yarn.js
+
+PATH: 
+  /usr/local/opt/gnu-getopt/bin:/usr/local/opt/mysql@5.7/bin:/Users/nithin/.pyenv/shims:/Users/nithin/.rbenv/shims:/Users/nithin/.rbenv/bin:/usr/local/opt/openssl/bin:/usr/local/opt/mysql-client/bin:/usr/local/opt/go@1.15.6/bin:/Users/nithin/.nvm/versions/node/v16.7.0/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/MacGPG2/bin:/Users/nithin/.cargo/bin:/Users/nithin/projects/go-ethereum/build/bin:/Users/nithin/go/bin:/Users/nithin/tools/helm-2.16.0:/Users/nithin/.krew/bin
+
+Yarn version: 
+  1.22.10
+
+Node version: 
+  16.7.0
+
+Platform: 
+  darwin x64
+
+Trace: 
+  SyntaxError: /Users/nithin/projects/button-wood/button-lending-pools/package.json: Unexpected token } in JSON at position 579
+      at JSON.parse (<anonymous>)
+      at /usr/local/Cellar/yarn/1.22.10/libexec/lib/cli.js:1625:59
+      at Generator.next (<anonymous>)
+      at step (/usr/local/Cellar/yarn/1.22.10/libexec/lib/cli.js:310:30)
+      at /usr/local/Cellar/yarn/1.22.10/libexec/lib/cli.js:321:13
+
+npm manifest: 
+  {
+    "name": "button-lending-pools",
+    "version": "1.0.0",
+    "description": "Button tokens on Compound lending pools.",
+    "keywords": [
+      "ethereum",
+      "ampleforth",
+      "compound",
+      "DeFi"
+    ],
+    "homepage": "https://github.com/button-wood/button-lending-pools#readme",
+    "bugs": {
+      "url": "https://github.com/button-wood/button-lending-pools/issues"
+    },
+    "repository": {
+      "type": "git",
+      "url": "git+https://github.com/button-wood/button-lending-pools.git"
+    },
+    "license": "GNU3",
+    "author": "eng@prl.one",
+    "scripts": {
+      "test": "yarn hardhat test",
+    },
+    "dependencies": {
+      "uFragments": "https://github.com/ampleforth/uFragments#v1.1.0"
+    }
+  }
+
+yarn manifest: 
+  No manifest
+
+Lockfile: 
+  No lockfile
