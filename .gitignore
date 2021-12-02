@@ -75,3 +75,9 @@ scDebugLog
 coverage.json
 coverage/
 coverageEnv/
+
+# generated files
+typechain
+.openzeppelin
+artifacts
+cache
