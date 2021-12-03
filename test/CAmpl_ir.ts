@@ -15,7 +15,6 @@ let ampl: Contract,
   anotherAccountAddress: string
 async function setupContractAndAccounts() {
   ;({ ampl, cAmpl, admin } = await setupCAmpl())
-  adminAddress = await admin.getAddress()
 
   const accounts = await ethers.getSigners()
   anotherAccount = accounts[8]

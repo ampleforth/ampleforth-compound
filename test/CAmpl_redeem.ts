@@ -1,5 +1,5 @@
 import { expect } from 'chai'
-import { Contract, Signer } from 'ethers'
+import { Contract, Signer, BigNumber } from 'ethers'
 import { setupCAmpl, toAmplFixedPt, rebase } from './helpers'
 
 const AMPLS_SUPPLIED = toAmplFixedPt('2000000') // 2m

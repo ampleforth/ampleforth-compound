@@ -26,6 +26,7 @@ const config: HardhatUserConfig = {
   },
   networks: {
     hardhat: {
+      // TODO: fix me, seutp cdelegator + implementation
       allowUnlimitedContractSize: true,
     },
   },

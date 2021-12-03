@@ -1,5 +1,5 @@
 import { ethers, upgrades } from 'hardhat'
-import { Contract, BigNumber } from 'ethers'
+import { Contract, BigNumber, Signer } from 'ethers'
 
 const AMPL_DECIMALS = 9
 
@@ -12,7 +12,7 @@ interface CAmplDeployment {
   admin: Signer
 }
 
-export const setupCAmpl = async (): CAmplDeployment => {
+export const setupCAmpl = async (): Promise<CAmplDeployment> => {
   const accounts = await ethers.getSigners()
   const admin = accounts[0]
   const adminAddress = await admin.getAddress()
@@ -34,9 +34,18 @@ export const setupCAmpl = async (): CAmplDeployment => {
     .connect(admin)
     .deploy()
 
-  const cAmpl = await (await ethers.getContractFactory('CAmpl'))
+  const cAmpl = await (await ethers.getContractFactory('CAmplERC20Immutable'))
     .connect(admin)
-    .deploy(ampl.address, comptroller.address, irm.address)
+    .deploy(
+      ampl.address, 
+      comptroller.address, 
+      irm.address,
+      '1000000000',
+      "Compound interest bearing AMPL",
+      "cAMPL",
+      18,
+      adminAddress,
+    )
 
   const cEther = await (await ethers.getContractFactory('MockCEther'))
     .connect(admin)
@@ -54,12 +63,12 @@ export const toAmplFixedPt = (ample: string): BigNumber =>
 export const toCAmplFixedPt = (ample: string): BigNumber =>
   ethers.utils.parseUnits(ample, 18)
 
-export const rebase = async (ampl: Contract, perc: number): void => {
+export const rebase = async (ampl: Contract, perc: number): Promise<void> => {
   const s = await ampl.totalSupply()
   await ampl.rebase(1, s.mul(perc).div('100'))
 }
 
-export const waitForNBlocks = async (blocks: number): void => {
+export const waitForNBlocks = async (blocks: number): Promise<void> => {
   for (let i = 0; i < blocks; i++) {
     await ethers.provider.send('evm_mine', [])
   }
